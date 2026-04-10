@@ -23,7 +23,7 @@ import pandas as pd
 app = Flask(__name__)
 
 # Load model
-model = joblib.load("model.pkl")
+model = joblib.load("rf_model.pkl")
 le = joblib.load("label_encoder.pkl")
 
 
@@ -50,12 +50,12 @@ def predict():
 
     proba = model.predict_proba(sample)[0]
     import numpy as np
-    top3_indices = np.argsort(proba)[::-1][:3]
-    top3_crops = le.inverse_transform(top3_indices)
-    top3_scores = (proba[top3_indices] * 100).round(1)
+    top8_indices = np.argsort(proba)[::-1][:8]
+    top_crops = le.inverse_transform(top8_indices)
+    top_scores = (proba[top8_indices] * 100).round(1)
 
     results = []
-    for crop, score in zip(top3_crops, top3_scores):
+    for crop, score in zip(top_crops, top_scores):
         decision = irrigation_advice(crop, data["rainfall"], data["humidity"])
         results.append({
             "crop": str(crop),

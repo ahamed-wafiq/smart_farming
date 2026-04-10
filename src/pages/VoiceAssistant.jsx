@@ -28,7 +28,7 @@ export default function VoiceAssistant() {
     <div className="animate-in fade-in zoom-in duration-500 pb-12">
       <div className="mb-6">
         <h2 className="text-xl font-bold text-white mb-2">Voice Assistant</h2>
-        <p className="text-slate-400 text-sm">Multilingual farmer support assistant for weather, crops, prices, and disease guidance.</p>
+        <p className="text-slate-400 text-sm">Multilingual farmer support assistant for weather, crops, and market prices.</p>
       </div>
 
       <div className="flex flex-wrap gap-3 mb-6">
@@ -57,7 +57,7 @@ export default function VoiceAssistant() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                placeholder="Hello farmer! Ask me about weather, crops, prices, or diseases." 
+                placeholder="Hello farmer! Ask me about weather, crops, or market prices." 
                 className="w-full bg-[#1e293b] border border-slate-700 text-slate-200 rounded-lg py-3 pl-4 pr-24 focus:outline-none focus:border-teal-500"
              />
              <button onClick={handleSend} className="absolute right-2 top-1/2 -translate-y-1/2 btn-primary py-1.5 px-4 text-sm font-semibold rounded-md">

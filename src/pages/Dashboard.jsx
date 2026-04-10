@@ -186,13 +186,13 @@ export default function Dashboard() {
                Running Deep Learning Models...
             </div>
         ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                {mlData?.result?.predictions && mlData.result.predictions.length > 0 ? (
                    mlData.result.predictions.map((p, idx) => (
                        <CropCard 
                            key={idx}
                            crop={p.crop.charAt(0).toUpperCase() + p.crop.slice(1)} 
-                           variant={idx === 0 ? "Top AI Match" : idx === 1 ? "Great Alternative" : "Viable Option"} 
+                           variant={idx === 0 ? "Top AI Match" : idx === 1 ? "Great Alternative" : idx === 2 ? "Viable Option" : "Secondary Option"} 
                            score={p.score} 
                            season="Current" 
                            water={p.irrigation || "Optimal"} 

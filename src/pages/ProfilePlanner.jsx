@@ -5,7 +5,7 @@ export default function ProfilePlanner() {
     <div className="animate-in fade-in zoom-in duration-500 pb-12">
       <div className="mb-6">
         <h2 className="text-xl font-bold text-white mb-2">Farmer Profile and Planner</h2>
-        <p className="text-slate-400 text-sm">Save farmer details, generate cost-revenue plans, and review disease scan history.</p>
+        <p className="text-slate-400 text-sm">Save farmer details, and generate cost-revenue plans.</p>
       </div>
 
       <div className="card-panel p-6 border border-slate-700/50 bg-[#0f172a]/80 mb-8">
@@ -26,14 +26,14 @@ export default function ProfilePlanner() {
            <button className="btn-primary px-6">Save Profile</button>
            <button className="bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-300 px-6 py-2 rounded-lg font-medium transition-colors">Load Profile</button>
            <button className="bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-300 px-6 py-2 rounded-lg font-medium transition-colors">Generate Season Plan</button>
-           <button className="bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-300 px-6 py-2 rounded-lg font-medium transition-colors">Load Disease History</button>
+           <button className="bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-300 px-6 py-2 rounded-lg font-medium transition-colors">Export Record</button>
         </div>
         
         <p className="text-sm text-slate-500">Fill profile and generate a plan.</p>
       </div>
 
       <div className="card-panel p-6 border border-slate-700/50 bg-[#0f172a]/80">
-        <h3 className="text-lg font-bold text-white mb-4">Disease Scan History</h3>
+        <h3 className="text-lg font-bold text-white mb-4">Historical Scans</h3>
         <p className="text-slate-400 text-sm">No records yet.</p>
       </div>
     </div>

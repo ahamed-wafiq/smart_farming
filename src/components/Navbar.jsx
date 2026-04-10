@@ -6,16 +6,17 @@ const Navbar = () => {
 
   const getPageInfo = () => {
     switch (location.pathname) {
+      case '/':
+        return {
+          title: 'Welcome to AgriVision',
+          subtitle: 'The centralized AI ecosystem for modern, metric-driven farming.'
+        };
       case '/dashboard':
         return {
           title: 'Farm Intelligence Console',
           subtitle: 'One place for field health, crop planning, and income decisions.'
         };
-      case '/disease-detection':
-        return {
-          title: 'Plant Health Scan',
-          subtitle: 'Capture a leaf image and get treatment recommendations in seconds.'
-        };
+
       case '/market-prices':
         return {
           title: 'Market Price Radar',
@@ -24,7 +25,7 @@ const Navbar = () => {
       case '/voice-assistant':
         return {
           title: 'Farmer Voice Copilot',
-          subtitle: 'Ask for weather, fertilizer, crop, and disease help in plain language.'
+          subtitle: 'Ask for weather, fertilizer, and crop help in plain language.'
         };
       case '/profile':
         return {

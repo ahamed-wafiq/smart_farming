@@ -8,13 +8,28 @@ const INDIAN_STATES = [
   "Odisha", "Punjab", "Rajasthan", "Tamil Nadu", "Telangana", "Uttar Pradesh", "Uttarakhand", "West Bengal"
 ];
 
-const MAJOR_CITIES = [
-  "All", "Pune", "Nashik", "Ahmednagar", "Nagpur", "Mumbai", "Ludhiana", "Patiala", "Amritsar", "Karnal", "Ambala",
-  "Hisar", "Agra", "Meerut", "Lucknow", "Kanpur", "Indore", "Bhopal", "Ujjain", "Shivpuri",
-  "Rajkot", "Surat", "Ahmedabad", "Jaipur", "Jodhpur", "Alwar", "Kota", "Bengaluru", "Mysuru",
-  "Hubballi", "Davangere", "Chittoor", "Guntur", "Kurnool", "Hyderabad", "Nizamabad", "Coimbatore",
-  "Madurai", "Erode", "Bardhaman", "Hooghly", "Patna", "Muzaffarpur", "Gaya"
-];
+const STATE_CITY_MAP = {
+  "Andhra Pradesh": ["Chittoor", "Guntur", "Kurnool"],
+  "Assam": ["Guwahati", "Silchar", "Dibrugarh"],
+  "Bihar": ["Patna", "Muzaffarpur", "Gaya"],
+  "Chhattisgarh": ["Raipur", "Bhilai", "Bilaspur"],
+  "Gujarat": ["Rajkot", "Surat", "Ahmedabad"],
+  "Haryana": ["Karnal", "Ambala", "Hisar"],
+  "Himachal Pradesh": ["Shimla", "Mandi", "Dharamshala"],
+  "Jharkhand": ["Ranchi", "Jamshedpur", "Dhanbad"],
+  "Karnataka": ["Bengaluru", "Mysuru", "Hubballi", "Davangere"],
+  "Kerala": ["Kochi", "Thiruvananthapuram", "Kozhikode"],
+  "Madhya Pradesh": ["Indore", "Bhopal", "Ujjain", "Shivpuri"],
+  "Maharashtra": ["Pune", "Nashik", "Ahmednagar", "Nagpur", "Mumbai"],
+  "Odisha": ["Bhubaneswar", "Cuttack", "Rourkela"],
+  "Punjab": ["Ludhiana", "Patiala", "Amritsar"],
+  "Rajasthan": ["Jaipur", "Jodhpur", "Alwar", "Kota"],
+  "Tamil Nadu": ["Coimbatore", "Madurai", "Erode"],
+  "Telangana": ["Hyderabad", "Nizamabad", "Warangal"],
+  "Uttar Pradesh": ["Agra", "Meerut", "Lucknow", "Kanpur"],
+  "Uttarakhand": ["Dehradun", "Haridwar", "Haldwani"],
+  "West Bengal": ["Bardhaman", "Hooghly", "Kolkata"]
+};
 
 export default function MarketPrices() {
   const [search, setSearch] = useState('');
@@ -44,7 +59,7 @@ export default function MarketPrices() {
         const data = await response.json();
         
         if (data && data.records && data.records.length > 0) {
-          const formatted = data.records.map((record, idx) => {
+          let formatted = data.records.map((record, idx) => {
              const modal = Number(record.Modal_Price || record.modal_price) || 0;
              const min = Number(record.Min_Price || record.min_price) || 0;
              const max = Number(record.Max_Price || record.max_price) || 0;
@@ -68,22 +83,47 @@ export default function MarketPrices() {
                 market: record.Market || record.District || record.market || 'Unknown'
              };
           });
+          
+          if (selectedState === 'All') formatted.sort(() => Math.random() - 0.5);
           setApiData(formatted);
         } else {
            throw new Error("No records returned from API.");
         }
       } catch (error) {
-        console.error("API failed (likely CORS/Rate Limit). Loading fallback dataset:", error);
-        setApiData([
-          { id: 101, crop: 'Wheat - PBW-550', marketPrice: 2410, msp: 2275, maxPrice: 2500, trend: '+5.9%', state: 'Punjab', market: 'Ludhiana APMC' },
-          { id: 102, crop: 'Rice - Basmati', marketPrice: 2650, msp: 2183, maxPrice: 2800, trend: '+21.3%', state: 'Haryana', market: 'Karnal APMC' },
-          { id: 103, crop: 'Soybean - Yellow', marketPrice: 4320, msp: 4600, maxPrice: 4500, trend: '-6.0%', state: 'Madhya Pradesh', market: 'Indore APMC' },
-          { id: 104, crop: 'Maize - Hybrid', marketPrice: 2180, msp: 2090, maxPrice: 2300, trend: '+4.3%', state: 'Karnataka', market: 'Davangere APMC' },
-          { id: 105, crop: 'Cotton - Medium', marketPrice: 7100, msp: 6620, maxPrice: 7500, trend: '+7.2%', state: 'Gujarat', market: 'Rajkot APMC' },
-          { id: 106, crop: 'Mustard - Black', marketPrice: 5920, msp: 5650, maxPrice: 6100, trend: '+4.7%', state: 'Rajasthan', market: 'Alwar APMC' },
-          { id: 107, crop: 'Onion - Red', marketPrice: 1950, msp: 1200, maxPrice: 2100, trend: '+62.5%', state: 'Maharashtra', market: 'Lasalgaon APMC' },
-          { id: 108, crop: 'Tomato - Local', marketPrice: 3200, msp: 2000, maxPrice: 4000, trend: '+60.0%', state: 'Andhra Pradesh', market: 'Chittoor APMC' }
-        ]);
+        console.error("API failed or empty. Loading rich fallback dataset:", error);
+        
+        // Generate 10 entries per state for robust fallback
+        const CROPS = ['Wheat - PBW', 'Rice - Basmati', 'Soybean - Yellow', 'Maize - Hybrid', 'Cotton - Medium', 'Mustard - Black', 'Onion - Red', 'Tomato - Local', 'Potato - Jyoti', 'Gram - Desi', 'Sugarcane', 'Groundnut'];
+        let mockData = [];
+        let idCount = 1000;
+        
+        const targetStates = selectedState !== 'All' ? [selectedState] : INDIAN_STATES.filter(s => s !== 'All');
+        
+        targetStates.forEach(state => {
+           for(let i=0; i<10; i++) {
+              const crop = CROPS[Math.floor(Math.random() * CROPS.length)];
+              const msp = 1500 + Math.floor(Math.random() * 3000);
+              const marketPrice = msp + Math.floor(Math.random() * 1000) - 200;
+              const maxPrice = marketPrice + Math.floor(Math.random() * 500);
+              
+              const diff = marketPrice - msp;
+              const percent = ((diff / msp) * 100).toFixed(1);
+              
+              mockData.push({
+                 id: idCount++,
+                 crop,
+                 marketPrice,
+                 msp,
+                 maxPrice,
+                 trend: diff >= 0 ? `+${percent}%` : `${percent}%`,
+                 state: state,
+                 market: (STATE_CITY_MAP[state] ? STATE_CITY_MAP[state][Math.floor(Math.random() * STATE_CITY_MAP[state].length)] : "Local") + ' APMC'
+              });
+           }
+        });
+        
+        if (selectedState === 'All') mockData.sort(() => Math.random() - 0.5);
+        setApiData(mockData);
       } finally {
         setLoading(false);
       }
@@ -94,8 +134,14 @@ export default function MarketPrices() {
 
   const filteredAndSorted = apiData
     .filter(item => {
-       const query = search.toLowerCase();
-       return item.crop.toLowerCase().includes(query) || item.state.toLowerCase().includes(query) || item.market.toLowerCase().includes(query);
+       if (selectedState !== 'All' && item.state.toLowerCase() !== selectedState.toLowerCase()) return false;
+       if (selectedCity !== 'All' && !item.market.toLowerCase().includes(selectedCity.toLowerCase())) return false;
+
+       if (search) {
+          const query = search.toLowerCase();
+          return item.crop.toLowerCase().includes(query) || item.state.toLowerCase().includes(query) || item.market.toLowerCase().includes(query);
+       }
+       return true;
     })
     .sort((a, b) => {
        if (sortBy === 'priceHigh') return b.marketPrice - a.marketPrice;
@@ -135,7 +181,7 @@ export default function MarketPrices() {
               <span className="px-3 py-3 text-slate-500 bg-slate-800 border-r border-slate-700">State</span>
               <select 
                  value={selectedState} 
-                 onChange={(e) => setSelectedState(e.target.value)}
+                 onChange={(e) => { setSelectedState(e.target.value); setSelectedCity('All'); }}
                  className="w-full bg-slate-900 text-slate-200 py-3 px-3 focus:outline-none cursor-pointer"
               >
                  {INDIAN_STATES.map((stat, i) => (
@@ -151,8 +197,9 @@ export default function MarketPrices() {
                  onChange={(e) => setSelectedCity(e.target.value)}
                  className="w-full bg-slate-900 text-slate-200 py-3 px-3 focus:outline-none cursor-pointer"
               >
-                 {MAJOR_CITIES.map((city, i) => (
-                   <option key={i} value={city}>{city === 'All' ? '— All Cities —' : city}</option>
+                 <option value="All">— All Cities —</option>
+                 {(selectedState === 'All' ? Object.values(STATE_CITY_MAP).flat() : (STATE_CITY_MAP[selectedState] || [])).map((city, i) => (
+                   <option key={i} value={city}>{city}</option>
                  ))}
               </select>
            </div>
