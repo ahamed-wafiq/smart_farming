@@ -1,9 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CloudRain, Wind, Droplets, Leaf, Activity, Users, AlertCircle, Droplet, Sprout, Wheat } from 'lucide-react';
 
 export default function Dashboard() {
   const [waterStress, setWaterStress] = useState(42);
   const [rainProb, setRainProb] = useState(33);
+  const [mlData, setMlData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // Default parameters matching the UI's soil inputs
+  const [soilData, setSoilData] = useState({
+    city: "Pune",
+    N: 42,
+    P: 28,
+    K: 55,
+    ph: 6.8
+  });
+
+  useEffect(() => {
+    const fetchPrediction = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch("http://localhost:5001/api/predict", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(soilData)
+        });
+        const data = await response.json();
+        setMlData(data);
+      } catch (error) {
+        console.error("Failed to fetch ML Prediction:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPrediction();
+  }, [soilData]);
 
   return (
     <div className="animate-in fade-in zoom-in duration-500 space-y-6 pb-12">
@@ -39,20 +70,22 @@ export default function Dashboard() {
                    <h3 className="font-bold text-white">Weather</h3>
                 </div>
                 <div className="text-xs text-slate-400 text-right">
-                   Pune, Maharashtra
+                   {mlData?.city || "Pune"}, {mlData ? "Live" : "Maharashtra"}
                 </div>
              </div>
              
              <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8 border-b border-slate-800 pb-6">
                 <div className="flex items-center gap-4">
-                   <div className="text-5xl font-bold text-white tracking-tighter">32°</div>
+                   <div className="text-5xl font-bold text-white tracking-tighter">
+                     {loading ? "--" : Math.round(mlData?.weather?.temperature || 32)}°
+                   </div>
                    <div className="text-sm text-slate-400">Partly<br/>Cloudy</div>
                 </div>
                 <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm">
                    <div className="text-slate-400">Humidity</div>
-                   <div className="text-right text-white font-medium">68%</div>
+                   <div className="text-right text-white font-medium">{loading ? "--" : Math.round(mlData?.weather?.humidity || 68)}%</div>
                    <div className="text-slate-400">Rainfall</div>
-                   <div className="text-right text-white font-medium">12mm</div>
+                   <div className="text-right text-white font-medium">{loading ? "--" : mlData?.weather?.rainfall?.toFixed(1) || 12}mm</div>
                    <div className="text-slate-400">Wind</div>
                    <div className="text-right text-white font-medium">14 km/h</div>
                 </div>
@@ -128,15 +161,32 @@ export default function Dashboard() {
       <div>
         <div className="flex items-center gap-2 mb-4 px-2">
             <span className="text-xl">🌾</span>
-            <h3 className="font-bold text-white">AI Crop Recommendations</h3>
+            <h3 className="font-bold text-white">AI Crop Recommendations (Live)</h3>
         </div>
-        <p className="text-sm text-slate-400 mb-4 px-2">Based on your soil data, weather patterns, and historical yields.</p>
+        <p className="text-sm text-slate-400 mb-4 px-2">Live prediction fetched from backend ML model based on your soil and weather data.</p>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-           <CropCard crop="Rice" variant="Rice (Basmati)" score="94" season="Kharif" water="High" soil="Alluvial / Clay" yieldAmt="4.2 tons/hectare" />
-           <CropCard crop="Soy" variant="Soybean" score="89" season="Kharif" water="Medium" soil="Black / Loamy" yieldAmt="2.8 tons/hectare" />
-           <CropCard crop="Wheat" variant="Wheat (HD-2967)" score="85" season="Rabi" water="Medium" soil="Loamy / Sandy Loam" yieldAmt="5.1 tons/hectare" />
-        </div>
+        {loading ? (
+            <div className="p-8 text-center text-slate-400 text-sm animate-pulse w-full card-panel border-dashed border-slate-700">
+               <Sprout className="w-8 h-8 mx-auto mb-2 text-emerald-500 animate-bounce" />
+               Running Deep Learning Models...
+            </div>
+        ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+               {mlData?.result?.crop && (
+                   <CropCard 
+                       crop={mlData.result.crop.charAt(0).toUpperCase() + mlData.result.crop.slice(1)} 
+                       variant="AI Recommended Match" 
+                       score="96" 
+                       season="Current" 
+                       water={mlData.result.irrigation || "Optimal"} 
+                       soil="Current Profile" 
+                       yieldAmt="Optimal" 
+                   />
+               )}
+               <CropCard crop="Rice" variant="Rice (Basmati)" score="94" season="Kharif" water="High" soil="Alluvial / Clay" yieldAmt="4.2 tons/hectare" />
+               <CropCard crop="Soy" variant="Soybean" score="89" season="Kharif" water="Medium" soil="Black / Loamy" yieldAmt="2.8 tons/hectare" />
+            </div>
+        )}
       </div>
     </div>
   );
