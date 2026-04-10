@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
 import { BrainCircuit } from 'lucide-react';
 
@@ -14,8 +13,6 @@ const mockData = [
 ];
 
 const PredictiveChart = () => {
-  const { t } = useTranslation();
-
   return (
     <div className="glass-panel p-6 h-full flex flex-col hover:shadow-2xl hover:shadow-accent-purple/10 transition-shadow duration-300">
       <div className="flex justify-between items-center mb-6">
