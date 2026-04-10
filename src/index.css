@@ -1,21 +1,42 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary-500: #10B981;
-  --color-primary-600: #059669;
-  --color-secondary-900: #1E293B;
-  --color-secondary-800: #334155;
-  --color-accent-blue: #3B82F6;
-  --color-accent-purple: #8B5CF6;
+  --color-primary-500: #06b6d4;
+  --color-primary-600: #0891b2;
+  --color-secondary-900: #0f172a;
+  --color-secondary-800: #1e293b;
+  --color-accent-teal: #14b8a6;
+  --color-accent-blue: #3b82f6;
+  --color-bg-dark: #0A101D;
+  --color-card-dark: #131B2C;
 }
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-50 antialiased;
-    font-family: 'Inter', system-ui, sans-serif;
+    @apply bg-[var(--color-bg-dark)] text-slate-200 antialiased overflow-x-hidden;
+    font-family: 'Sora', system-ui, sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Bricolage Grotesque', system-ui, sans-serif;
   }
 }
 
 .glass-panel {
-  @apply bg-white/70 dark:bg-secondary-800/70 backdrop-blur-md border border-white/20 dark:border-slate-700/50 shadow-xl rounded-2xl;
+  @apply bg-[#111827]/70 backdrop-blur-xl border border-white/5 shadow-2xl rounded-2xl;
+}
+
+.card-panel {
+  @apply bg-[var(--color-card-dark)] border border-slate-800 rounded-xl overflow-hidden;
+}
+
+.btn-primary {
+  @apply bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-400 hover:to-teal-400 text-white font-medium py-2 px-4 rounded-lg shadow-lg shadow-teal-500/20 transition-all duration-300 flex items-center justify-center;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }

@@ -1,61 +1,82 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { Bell, Search, Globe } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 
 const Navbar = () => {
-  const { t, i18n } = useTranslation();
+  const location = useLocation();
 
-  const handleLanguageChange = (e) => {
-    i18n.changeLanguage(e.target.value);
+  const getPageInfo = () => {
+    switch (location.pathname) {
+      case '/dashboard':
+        return {
+          title: 'Farm Intelligence Console',
+          subtitle: 'One place for field health, crop planning, and income decisions.'
+        };
+      case '/disease-detection':
+        return {
+          title: 'Plant Health Scan',
+          subtitle: 'Capture a leaf image and get treatment recommendations in seconds.'
+        };
+      case '/market-prices':
+        return {
+          title: 'Market Price Radar',
+          subtitle: 'Compare MSP and mandi prices to decide the right sell timing.'
+        };
+      case '/voice-assistant':
+        return {
+          title: 'Farmer Voice Copilot',
+          subtitle: 'Ask for weather, fertilizer, crop, and disease help in plain language.'
+        };
+      case '/profile':
+        return {
+          title: 'Farmer Profile and Season Planner',
+          subtitle: 'Save farmer details, generate crop economics, and review scan history.'
+        };
+      default:
+        return {
+          title: 'AgriVision Panel',
+          subtitle: 'Manage your farming activities and insights.'
+        };
+    }
   };
 
-  const currentLangs = Object.keys(i18n.options.resources || {});
+  const { title, subtitle } = getPageInfo();
 
   return (
-    <header className="h-20 px-8 flex items-center justify-between sticky top-0 z-10 glass-panel border-x-0 border-t-0 rounded-none bg-slate-900/60 shadow-md">
-      <div className="flex items-center gap-4 text-slate-300">
-        <div className="relative">
-          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-          <input 
-            type="text" 
-            placeholder="Search farm metrics..." 
-            className="pl-10 pr-4 py-2 bg-slate-800 border border-slate-700 rounded-full text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-all text-slate-200 placeholder-slate-500 w-64"
-          />
-        </div>
-      </div>
+    <div className="px-6 pt-6 pb-2 relative z-10 w-full max-w-[1600px] mx-auto">
+      <div className="relative rounded-2xl overflow-hidden bg-gradient-to-r from-slate-800 to-teal-900/40 border border-slate-700/50 shadow-2xl p-8">
+        {/* Decorative subtle background elements */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500/10 rounded-full blur-[80px] pointer-events-none mix-blend-screen"></div>
+        <div className="absolute bottom-[-20%] left-[20%] w-32 h-32 bg-cyan-500/10 rounded-full blur-[60px] pointer-events-none mix-blend-screen"></div>
 
-      <div className="flex items-center gap-6">
-        <div className="flex items-center gap-2">
-          <Globe size={18} className="text-slate-400" />
-          <select 
-            onChange={handleLanguageChange} 
-            value={i18n.language}
-            className="bg-transparent text-sm text-slate-300 border-none outline-none cursor-pointer focus:ring-0 appearance-none font-medium"
-          >
-            {currentLangs.map((lang) => (
-              <option key={lang} value={lang} className="bg-slate-800 text-slate-200">
-                {t(`languages.${lang}`, { defaultValue: lang.toUpperCase() })}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <button className="relative p-2 text-slate-400 hover:text-white transition-colors">
-          <Bell size={20} />
-          <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full animate-pulse"></span>
-        </button>
-
-        <div className="flex items-center gap-3 pl-6 border-l border-slate-700">
-          <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-accent-purple to-accent-blue flex items-center justify-center text-sm font-bold text-white shadow-md">
-            RK
+        <div className="relative flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+          <div className="space-y-2">
+            <div className="text-[10px] font-bold tracking-widest text-teal-400 uppercase">
+              AGRIVISION MVP
+            </div>
+            <h1 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight font-bricolage">
+              {title}
+            </h1>
+            <p className="text-slate-300 text-sm md:text-base max-w-2xl">
+              {subtitle}
+            </p>
           </div>
-          <div className="hidden md:block">
-            <p className="text-sm font-medium text-slate-200">Raju Kisan</p>
-            <p className="text-xs text-slate-500">Premium Farmer</p>
+
+          <div className="flex flex-col items-end gap-3 w-full md:w-auto">
+             <div className="text-xs text-slate-400 font-medium whitespace-nowrap">
+                Logged in: <span className="text-slate-300">Demo Farmer (9999999999)</span>
+             </div>
+             <div className="flex items-center gap-3">
+               <button className="px-4 py-1.5 text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-slate-600 rounded-lg transition-colors shadow-sm">
+                 Light mode
+               </button>
+               <button className="px-4 py-1.5 text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-slate-600 rounded-lg transition-colors shadow-sm">
+                 Logout
+               </button>
+             </div>
           </div>
         </div>
       </div>
-    </header>
+    </div>
   );
 };
 
