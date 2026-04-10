@@ -48,18 +48,25 @@ def predict():
 
     sample = pd.DataFrame([data])
 
-    pred = model.predict(sample)
-    crop = le.inverse_transform(pred)[0]
+    proba = model.predict_proba(sample)[0]
+    import numpy as np
+    top3_indices = np.argsort(proba)[::-1][:3]
+    top3_crops = le.inverse_transform(top3_indices)
+    top3_scores = (proba[top3_indices] * 100).round(1)
 
-    decision = irrigation_advice(
-        crop,
-        data["rainfall"],
-        data["humidity"]
-    )
+    results = []
+    for crop, score in zip(top3_crops, top3_scores):
+        decision = irrigation_advice(crop, data["rainfall"], data["humidity"])
+        results.append({
+            "crop": str(crop),
+            "score": float(score),
+            "irrigation": str(decision)
+        })
 
     return jsonify({
-        "crop": crop,
-        "irrigation": decision
+        "crop": results[0]["crop"],
+        "irrigation": results[0]["irrigation"],
+        "predictions": results
     })
 
 if __name__ == "__main__":

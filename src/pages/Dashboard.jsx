@@ -69,8 +69,23 @@ export default function Dashboard() {
                    <span className="text-2xl">⛅</span>
                    <h3 className="font-bold text-white">Weather</h3>
                 </div>
-                <div className="text-xs text-slate-400 text-right">
-                   {mlData?.city || "Pune"}, {mlData ? "Live" : "Maharashtra"}
+                <div className="text-right flex flex-col items-end gap-1">
+                   <select 
+                       value={soilData.city}
+                       onChange={(e) => setSoilData({ ...soilData, city: e.target.value })}
+                       className="bg-slate-800/50 border border-slate-700 text-white text-xs font-medium rounded-lg px-2.5 py-1 outline-none focus:border-emerald-500 cursor-pointer hover:bg-slate-800 transition-colors"
+                   >
+                     <option value="Pune">Pune, MH</option>
+                     <option value="Mumbai">Mumbai, MH</option>
+                     <option value="Delhi">Delhi, DL</option>
+                     <option value="Bangalore">Bangalore, KA</option>
+                     <option value="Chennai">Chennai, TN</option>
+                     <option value="Hyderabad">Hyderabad, TS</option>
+                     <option value="Ahmedabad">Ahmedabad, GJ</option>
+                     <option value="Kolkata">Kolkata, WB</option>
+                     <option value="Jaipur">Jaipur, RJ</option>
+                   </select>
+                   <span className="text-[10px] font-medium text-emerald-500/70">{mlData ? "Live ML Sync" : "Connecting..."}</span>
                 </div>
              </div>
              
@@ -172,19 +187,36 @@ export default function Dashboard() {
             </div>
         ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-               {mlData?.result?.crop && (
-                   <CropCard 
-                       crop={mlData.result.crop.charAt(0).toUpperCase() + mlData.result.crop.slice(1)} 
-                       variant="AI Recommended Match" 
-                       score="96" 
-                       season="Current" 
-                       water={mlData.result.irrigation || "Optimal"} 
-                       soil="Current Profile" 
-                       yieldAmt="Optimal" 
-                   />
+               {mlData?.result?.predictions && mlData.result.predictions.length > 0 ? (
+                   mlData.result.predictions.map((p, idx) => (
+                       <CropCard 
+                           key={idx}
+                           crop={p.crop.charAt(0).toUpperCase() + p.crop.slice(1)} 
+                           variant={idx === 0 ? "Top AI Match" : idx === 1 ? "Great Alternative" : "Viable Option"} 
+                           score={p.score} 
+                           season="Current" 
+                           water={p.irrigation || "Optimal"} 
+                           soil="Current Profile" 
+                           yieldAmt="Optimal Yield" 
+                       />
+                   ))
+               ) : (
+                   <>
+                     {mlData?.result?.crop && (
+                         <CropCard 
+                             crop={mlData.result.crop.charAt(0).toUpperCase() + mlData.result.crop.slice(1)} 
+                             variant="AI Recommended Match" 
+                             score="96" 
+                             season="Current" 
+                             water={mlData.result.irrigation || "Optimal"} 
+                             soil="Current Profile" 
+                             yieldAmt="Optimal" 
+                         />
+                     )}
+                     <CropCard crop="Rice" variant="Rice (Basmati)" score="94" season="Kharif" water="High" soil="Alluvial / Clay" yieldAmt="4.2 tons/hectare" />
+                     <CropCard crop="Soy" variant="Soybean" score="89" season="Kharif" water="Medium" soil="Black / Loamy" yieldAmt="2.8 tons/hectare" />
+                   </>
                )}
-               <CropCard crop="Rice" variant="Rice (Basmati)" score="94" season="Kharif" water="High" soil="Alluvial / Clay" yieldAmt="4.2 tons/hectare" />
-               <CropCard crop="Soy" variant="Soybean" score="89" season="Kharif" water="Medium" soil="Black / Loamy" yieldAmt="2.8 tons/hectare" />
             </div>
         )}
       </div>
