@@ -1,12 +1,15 @@
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
+require("dotenv").config();
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-const API_KEY = "1f5d92acda740d0bb677c93ce05ebb29";
+const API_KEY = process.env.OPENWEATHER_API_KEY;
+const ML_API_PORT = process.env.ML_API_PORT || 5005;
+const PORT = process.env.PORT || 5007;
 
 app.post("/api/predict", async (req, res) => {
   try {
@@ -52,7 +55,7 @@ app.post("/api/predict", async (req, res) => {
 
     // 🔁 STEP 4: Call Python API
     const response = await axios.post(
-      "http://localhost:5000/predict",
+      `http://localhost:${ML_API_PORT}/predict`,
       modelInput
     );
 
@@ -69,6 +72,17 @@ app.post("/api/predict", async (req, res) => {
   }
 });
 
-app.listen(5001, () => {
-  console.log("Server running on port 5001");
+app.post("/api/assistant", async (req, res) => {
+  try {
+    const { text } = req.body;
+    const response = await axios.post(`http://localhost:${ML_API_PORT}/ask`, { text });
+    res.json(response.data);
+  } catch (error) {
+    console.error("Node Assistant Proxy Error:", error.response?.data || error.message);
+    res.status(500).json({ error: "Aggregator failed to reach AI Brain" });
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });

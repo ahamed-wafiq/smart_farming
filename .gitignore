@@ -25,15 +25,13 @@ dist-ssr
 
 # Environment & credentials
 .env
-.env.*
+.env.local
 backend/.env
+!.env.example
+!backend/.env.example
 
 # Python / ML artifacts
 __pycache__/
 *.py[cod]
 backend/LLM_model/
-backend/models/
 *.safetensors
-*.pb
-*.h5
-*.pkl
