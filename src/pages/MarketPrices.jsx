@@ -1,6 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Loader2, MapPin, DollarSign, RefreshCw, Download, LineChart as LineChartIcon, TrendingUp } from 'lucide-react';
-import { LineChart, Line, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { 
+  Loader2, 
+  MapPin, 
+  DollarSign, 
+  RefreshCw, 
+  Download, 
+  LineChart as LineChartIcon, 
+  TrendingUp, 
+  Search,
+  Filter,
+  IndianRupee
+} from 'lucide-react';
+import { LineChart, Line, Tooltip, ResponsiveContainer } from 'recharts';
 
 const INDIAN_STATES = [
   "All", "Andhra Pradesh", "Assam", "Bihar", "Chhattisgarh", "Gujarat", "Haryana",
@@ -45,7 +56,7 @@ export default function MarketPrices() {
     const fetchMarketData = async () => {
       try {
         setLoading(true);
-        const apiKey = import.meta.env.VITE_DATA_GOV_API_KEY || '579b464db66ec23bdd000001cdd3946e44ce4aad7209ff7b23ac571b';
+        const apiKey = import.meta.env.VITE_DATA_GOV_API_KEY;
         const resourceId = '9ef84268-d588-465a-a308-a864a43d0070';
         
         // Base API URL
@@ -150,103 +161,128 @@ export default function MarketPrices() {
     });
 
   return (
-    <div className="animate-in fade-in zoom-in duration-500 pb-12">
-      <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="space-y-6 pb-12 animate-in fade-in duration-300">
+      
+      {/* Header bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-           <h2 className="text-xl font-bold text-white mb-1">Market Intelligence</h2>
-           <p className="text-slate-400 text-sm flex items-center gap-2">Track real-time Mandi prices from Data.gov.in.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#24352A] font-bricolage tracking-tight">
+            Market Intelligence Radar
+          </h1>
+          <p className="text-xs sm:text-sm text-[#718078] mt-1">
+            Real-time APMC Mandi commodity rates and MSP comparisons via Data.gov.in.
+          </p>
         </div>
+        
         <div className="flex items-center gap-3">
-           <button onClick={() => setRefreshTrigger(prev => prev + 1)} className="btn-primary flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors border border-slate-700">
-             <RefreshCw size={16} className={loading ? 'animate-spin' : ''} /> Sync Data
-           </button>
-           <button className="btn-primary flex items-center gap-2 px-4 py-2">
-             <Download size={16} /> Export CSV
-           </button>
+          <button 
+            onClick={() => setRefreshTrigger(prev => prev + 1)} 
+            className="btn-secondary text-xs sm:text-sm py-2 px-4 shadow-xs"
+          >
+            <RefreshCw size={15} className={loading ? 'animate-spin' : ''} /> 
+            Sync Mandi Feed
+          </button>
+          <button className="btn-primary text-xs sm:text-sm py-2 px-4">
+            <Download size={15} /> Export Report
+          </button>
         </div>
       </div>
 
-      <div className="card-panel p-6 mb-6 border border-slate-700/50">
-         <div className="flex justify-between items-end mb-4">
-           <label className="block text-sm font-medium text-slate-300">Advanced Geographical Filtering</label>
-           {!loading && (
-             <span className="text-xs font-semibold px-2 py-1 rounded bg-teal-500/10 text-teal-400 border border-teal-500/20">
-               {apiData.length} active queries
-             </span>
-           )}
-         </div>
-         
-         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-           <div className="md:col-span-1 border border-slate-700 rounded-lg overflow-hidden flex bg-slate-900 group focus-within:border-teal-500 transition-colors">
-              <span className="px-3 py-3 text-slate-500 bg-slate-800 border-r border-slate-700">State</span>
-              <select 
-                 value={selectedState} 
-                 onChange={(e) => { setSelectedState(e.target.value); setSelectedCity('All'); }}
-                 className="w-full bg-slate-900 text-slate-200 py-3 px-3 focus:outline-none cursor-pointer"
-              >
-                 {INDIAN_STATES.map((stat, i) => (
-                   <option key={i} value={stat}>{stat === 'All' ? '— All States —' : stat}</option>
-                 ))}
-              </select>
-           </div>
-           
-           <div className="md:col-span-1 border border-slate-700 rounded-lg overflow-hidden flex bg-slate-900 group focus-within:border-teal-500 transition-colors">
-              <span className="px-3 py-3 text-slate-500 bg-slate-800 border-r border-slate-700">City/Mandi</span>
-              <select 
-                 value={selectedCity} 
-                 onChange={(e) => setSelectedCity(e.target.value)}
-                 className="w-full bg-slate-900 text-slate-200 py-3 px-3 focus:outline-none cursor-pointer"
-              >
-                 <option value="All">— All Cities —</option>
-                 {(selectedState === 'All' ? Object.values(STATE_CITY_MAP).flat() : (STATE_CITY_MAP[selectedState] || [])).map((city, i) => (
-                   <option key={i} value={city}>{city}</option>
-                 ))}
-              </select>
-           </div>
-           
-           <div className="md:col-span-1">
-             <input 
+      {/* Filter Card */}
+      <div className="card-panel p-5 sm:p-6 space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Filter size={16} className="text-[#3FAE68]" />
+            <span className="text-sm font-bold text-[#24352A]">Geographical & Commodity Filter</span>
+          </div>
+          {!loading && (
+            <span className="badge-pill-green">
+              {filteredAndSorted.length} Mandi Records
+            </span>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {/* State Dropdown */}
+          <div>
+            <label className="block text-[11px] font-bold text-[#718078] uppercase mb-1.5">State</label>
+            <select 
+              value={selectedState} 
+              onChange={(e) => { setSelectedState(e.target.value); setSelectedCity('All'); }}
+              className="w-full bg-[#F2F6F0] border border-[#E2ECE4] text-[#24352A] text-xs font-semibold rounded-xl py-2.5 px-3 focus:outline-none focus:border-[#3FAE68] cursor-pointer"
+            >
+              {INDIAN_STATES.map((stat, i) => (
+                <option key={i} value={stat}>{stat === 'All' ? '— All Indian States —' : stat}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* City / Mandi */}
+          <div>
+            <label className="block text-[11px] font-bold text-[#718078] uppercase mb-1.5">Mandi / District</label>
+            <select 
+              value={selectedCity} 
+              onChange={(e) => setSelectedCity(e.target.value)}
+              className="w-full bg-[#F2F6F0] border border-[#E2ECE4] text-[#24352A] text-xs font-semibold rounded-xl py-2.5 px-3 focus:outline-none focus:border-[#3FAE68] cursor-pointer"
+            >
+              <option value="All">— All Mandis —</option>
+              {(selectedState === 'All' ? Object.values(STATE_CITY_MAP).flat() : (STATE_CITY_MAP[selectedState] || [])).map((city, i) => (
+                <option key={i} value={city}>{city}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Search */}
+          <div>
+            <label className="block text-[11px] font-bold text-[#718078] uppercase mb-1.5">Search Crop</label>
+            <div className="relative">
+              <input 
                 type="text" 
-                placeholder="Micro-search crop or mandi..." 
+                placeholder="Search Wheat, Rice..." 
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full h-full bg-slate-900 border border-slate-700 text-slate-200 rounded-lg py-3 px-4 focus:outline-none focus:border-teal-500 transition-colors"
-             />
-           </div>
-           
-           <div className="md:col-span-1">
-             <select 
-                value={sortBy} 
-                onChange={(e) => setSortBy(e.target.value)}
-                className="w-full h-full bg-slate-900 border border-slate-700 text-slate-200 rounded-lg py-3 px-4 focus:outline-none focus:border-teal-500 transition-colors"
-             >
-                <option value="default">Sort: Default Match</option>
-                <option value="priceHigh">Highest Price</option>
-                <option value="marginHigh">Highest Margin</option>
-             </select>
-           </div>
-         </div>
+                className="w-full bg-[#F2F6F0] border border-[#E2ECE4] text-[#24352A] placeholder-[#9BA8A0] text-xs font-semibold rounded-xl py-2.5 pl-8 pr-3 focus:outline-none focus:border-[#3FAE68]"
+              />
+              <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#718078]" />
+            </div>
+          </div>
+
+          {/* Sort By */}
+          <div>
+            <label className="block text-[11px] font-bold text-[#718078] uppercase mb-1.5">Sort Rates</label>
+            <select 
+              value={sortBy} 
+              onChange={(e) => setSortBy(e.target.value)}
+              className="w-full bg-[#F2F6F0] border border-[#E2ECE4] text-[#24352A] text-xs font-semibold rounded-xl py-2.5 px-3 focus:outline-none focus:border-[#3FAE68] cursor-pointer"
+            >
+              <option value="default">Sort: Default Match</option>
+              <option value="priceHigh">Highest Market Price</option>
+              <option value="marginHigh">Highest Margin vs MSP</option>
+            </select>
+          </div>
+        </div>
       </div>
 
+      {/* Grid of Price Cards */}
       {loading ? (
-        <div className="flex flex-col items-center justify-center p-12 text-slate-400 card-panel border border-slate-800">
-           <Loader2 className="w-8 h-8 animate-spin text-teal-500 mb-4" />
-           <p>Connecting to Data.gov.in and fetching geographic records...</p>
+        <div className="p-16 text-center text-[#718078] card-panel flex flex-col items-center justify-center gap-3">
+          <Loader2 className="w-8 h-8 animate-spin text-[#3FAE68]" />
+          <div className="font-semibold text-[#24352A]">Connecting to Data.gov.in Mandi Gateway...</div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {filteredAndSorted.map((item, idx) => (
-             <PriceCard key={idx} data={item} />
+            <PriceCard key={idx} data={item} />
           ))}
           {filteredAndSorted.length === 0 && (
-             <div className="col-span-full text-center text-slate-500 py-16 card-panel bg-slate-900/50 border border-slate-700/50 border-dashed">
-               <div className="flex justify-center mb-3"><Loader2 className="w-8 h-8 text-slate-600 animate-pulse" /></div>
-               <p className="font-semibold text-slate-400">No records found for that specific Geography / Commodity filter.</p>
-               <p className="text-sm mt-1">Try expanding your state or city selection to 'All'.</p>
-             </div>
+            <div className="col-span-full text-center text-[#718078] py-16 card-panel border-dashed border-[#C3DFC9]">
+              <p className="font-bold text-base text-[#24352A]">No records found for this combination.</p>
+              <p className="text-xs text-[#718078] mt-1">Try resetting the State or Mandi filter back to 'All'.</p>
+            </div>
           )}
         </div>
       )}
+
     </div>
   );
 }
@@ -256,79 +292,93 @@ function PriceCard({ data }) {
   const diff = data.marketPrice - data.msp;
   const isPositive = diff >= 0;
 
-  // Mock historical data for the chart functionality
+  // Mock historical data for chart
   const chartData = [
-     { day: 'Day 1', price: data.marketPrice * 0.9 },
-     { day: 'Day 2', price: data.marketPrice * 0.95 },
-     { day: 'Day 3', price: data.marketPrice * 1.05 },
-     { day: 'Day 4', price: data.marketPrice * 0.98 },
+     { day: 'Day 1', price: Math.round(data.marketPrice * 0.92) },
+     { day: 'Day 2', price: Math.round(data.marketPrice * 0.96) },
+     { day: 'Day 3', price: Math.round(data.marketPrice * 1.04) },
+     { day: 'Day 4', price: Math.round(data.marketPrice * 0.99) },
      { day: 'Today', price: data.marketPrice }
   ];
 
   return (
-    <div className="card-panel p-6 flex flex-col justify-between hover:shadow-xl hover:shadow-teal-500/10 transition-all border border-slate-700/50 group h-fit">
-       <div className="flex justify-between items-start mb-5 border-b border-slate-700/50 pb-4">
+    <div className="card-panel p-5 hover:border-[#3FAE68] transition-all group flex flex-col justify-between">
+      <div>
+        {/* Card Header */}
+        <div className="flex justify-between items-start mb-3 pb-3 border-b border-[#E2ECE4]">
           <div>
-             <h3 className="text-lg font-bold text-white group-hover:text-teal-400 transition-colors">{data.crop}</h3>
-             <div className="flex items-center gap-1 text-xs text-slate-400 mt-1 font-medium bg-slate-900/50 w-fit px-2 py-0.5 rounded">
-                <MapPin size={12} className="text-slate-500" /> {data.market}, {data.state}
-             </div>
+            <h3 className="text-base font-bold text-[#24352A] group-hover:text-[#176B3A] transition-colors font-bricolage">
+              {data.crop}
+            </h3>
+            <div className="flex items-center gap-1 text-[11px] text-[#718078] mt-0.5 font-medium">
+              <MapPin size={12} className="text-[#3FAE68]" /> {data.market}, {data.state}
+            </div>
           </div>
-          <div className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider whitespace-nowrap ${isPositive ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}`}>
+          <div className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold whitespace-nowrap ${
+            isPositive ? 'bg-[#DDF2E3] text-[#176B3A]' : 'bg-[#FEE2E2] text-[#DC2626]'
+          }`}>
             {data.trend}
           </div>
-       </div>
+        </div>
 
-       <div className="space-y-3 mb-4">
-          <div className="flex justify-between items-center p-3 rounded-lg bg-teal-500/5 border border-teal-500/20 relative overflow-hidden">
-             <div className="absolute left-0 top-0 bottom-0 w-1 bg-teal-500/50"></div>
-             <div className="flex items-center gap-2">
-                <DollarSign size={16} className="text-teal-500" />
-                <span className="text-sm font-semibold text-slate-200">Current Market</span>
-             </div>
-             <div className="text-lg font-bold text-white">{data.marketPrice} <span className="text-xs font-medium text-slate-500">₹/q</span></div>
+        {/* Pricing Metrics */}
+        <div className="space-y-2 mb-4">
+          <div className="flex justify-between items-center p-3 rounded-xl bg-[#F2F6F0] border border-[#E2ECE4]/70">
+            <span className="text-xs font-semibold text-[#718078]">Current Modal Price</span>
+            <div className="text-lg font-extrabold text-[#176B3A] font-bricolage">
+              ₹{data.marketPrice} <span className="text-[10px] font-normal text-[#718078]">/quintal</span>
+            </div>
           </div>
           
-          <div className="flex justify-between items-center px-3">
-             <span className="text-xs font-medium text-slate-400">Min Protocol (MSP)</span>
-             <div className="text-sm font-bold text-slate-300">{data.msp} <span className="text-[10px] text-slate-500">₹/q</span></div>
+          <div className="flex justify-between items-center px-2 text-xs">
+            <span className="text-[#718078]">Min Support Price (MSP)</span>
+            <span className="font-bold text-[#24352A]">₹{data.msp} /q</span>
           </div>
-          
+
           {data.maxPrice > 0 && (
-             <div className="flex justify-between items-center px-3">
-                <span className="text-xs font-medium text-slate-400">Max Peak Traded</span>
-                <div className="text-sm font-bold text-slate-300">{data.maxPrice} <span className="text-[10px] text-slate-500">₹/q</span></div>
-             </div>
+            <div className="flex justify-between items-center px-2 text-xs">
+              <span className="text-[#718078]">Peak Traded Rate</span>
+              <span className="font-bold text-[#24352A]">₹{data.maxPrice} /q</span>
+            </div>
           )}
-       </div>
+        </div>
 
-       {expanded && (
-         <div className="h-32 mt-4 animate-in fade-in slide-in-from-top-2 duration-300">
-           <h4 className="text-xs font-medium text-slate-400 mb-2 flex items-center gap-1"><TrendingUp size={12}/> 5-Day Trend Prediction</h4>
-           <ResponsiveContainer width="100%" height="100%">
-             <LineChart data={chartData}>
-               <Tooltip 
-                  contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '0.5rem', fontSize: '12px' }}
-                  itemStyle={{ color: '#2dd4bf' }}
-               />
-               <Line type="monotone" dataKey="price" stroke="#2dd4bf" strokeWidth={2} dot={{ fill: '#0f172a', strokeWidth: 2 }} />
-             </LineChart>
-           </ResponsiveContainer>
-         </div>
-       )}
-
-       <div className="mt-4 pt-4 border-t border-slate-800 flex items-center justify-between">
-          <div className="text-xs font-medium text-slate-400">
-             {isPositive ? 'Pricing looks profitable' : 'Awaiting better margin'}
+        {/* Chart View */}
+        {expanded && (
+          <div className="h-32 mt-3 pt-3 border-t border-[#E2ECE4] animate-in fade-in duration-200">
+            <div className="text-[11px] font-bold text-[#718078] mb-1 flex items-center gap-1">
+              <TrendingUp size={12} className="text-[#3FAE68]" /> 5-Day APMC Trend
+            </div>
+            <ResponsiveContainer width="100%" height="85%" minWidth={0}>
+              <LineChart data={chartData}>
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: '#FFFFFF', 
+                    borderRadius: '8px', 
+                    border: '1px solid #E2ECE4', 
+                    fontSize: '11px', 
+                    color: '#24352A' 
+                  }} 
+                />
+                <Line type="monotone" dataKey="price" stroke="#3FAE68" strokeWidth={2.5} dot={{ fill: '#176B3A', r: 3 }} />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
-          <button 
-             onClick={() => setExpanded(!expanded)}
-             className="text-xs font-bold text-teal-400 hover:text-teal-300 flex items-center gap-1 bg-teal-500/10 px-2 py-1 rounded transition-colors"
-          >
-             <LineChartIcon size={12} />
-             {expanded ? 'Hide Chart' : 'Show Chart'}
-          </button>
-       </div>
+        )}
+      </div>
+
+      <div className="mt-3 pt-3 border-t border-[#E2ECE4] flex items-center justify-between">
+        <span className="text-[11px] font-semibold text-[#718078]">
+          {isPositive ? '● Trade margin profitable' : '● Low price margin'}
+        </span>
+        <button 
+          onClick={() => setExpanded(!expanded)}
+          className="text-xs font-bold text-[#176B3A] hover:text-[#3FAE68] flex items-center gap-1 py-1 px-2.5 rounded-lg hover:bg-[#DDF2E3] transition-colors"
+        >
+          <LineChartIcon size={13} />
+          {expanded ? 'Hide Trend' : 'View Trend'}
+        </button>
+      </div>
     </div>
   );
 }

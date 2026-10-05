@@ -11,7 +11,7 @@ const resources = {
       recommendations: "Smart Recommendations",
       temperature: "Temperature",
       humidity: "Humidity",
-      soil_moisture: "Soil Moisture",
+
       predict_yield: "Predict Yield",
       irrigate_now: "Irrigate Now",
       water_saved: "Water Saved",
@@ -39,7 +39,7 @@ const resources = {
       recommendations: "स्मार्ट सिफारिशें",
       temperature: "तापमान",
       humidity: "नमी",
-      soil_moisture: "मिट्टी की नमी",
+
       predict_yield: "उपज का अनुमान",
       irrigate_now: "अभी सिंचाई करें",
       water_saved: "पानी की बचत",

@@ -1,71 +1,170 @@
 import React, { useState } from 'react';
+import { Bot, Send, User, Sparkles, MessageSquare, Mic, Volume2 } from 'lucide-react';
 
 export default function VoiceAssistant() {
   const [messages, setMessages] = useState([
-    { text: "Namaste! I am AgriVision, your farming assistant. How can I help today?", isBot: true }
+    { 
+      text: "Namaste! I am AgriVision, your smart agricultural assistant powered by Google Gemini. Ask me about crop diseases, weather trends, APMC mandi rates, or soil fertility.", 
+      isBot: true 
+    }
   ]);
   const [input, setInput] = useState("");
+  const [isTranslating, setIsTranslating] = useState(false);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim()) return;
-    setMessages(prev => [...prev, { text: input, isBot: false }]);
+
+    const userText = input;
+    setMessages(prev => [...prev, { text: userText, isBot: false }]);
     setInput("");
-    
-    // Mock response
-    setTimeout(() => {
-      setMessages(prev => [...prev, { text: "I can assist you with that! Processing your request based on current agricultural data...", isBot: true }]);
-    }, 1000);
+    setIsTranslating(true);
+
+    try {
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5007';
+      const response = await fetch(`${backendUrl}/api/assistant`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: userText }),
+      });
+
+      const data = await response.json();
+      
+      if (data.translation) {
+        setMessages(prev => [...prev, { 
+          text: `[Translation]: ${data.translation}`, 
+          isBot: true,
+          isSystem: true 
+        }]);
+      }
+
+      setTimeout(() => {
+        setMessages(prev => [...prev, { 
+          text: data.answer || "I could not generate an answer to that. Please check your query or backend connection.", 
+          isBot: true 
+        }]);
+        setIsTranslating(false);
+      }, 400);
+
+    } catch (error) {
+      console.error("Assistant error:", error);
+      setIsTranslating(false);
+      setMessages(prev => [...prev, { 
+        text: "Sorry, I am having trouble connecting to the Gemini AI backend. Please verify your backend server is active.", 
+        isBot: true 
+      }]);
+    }
   };
 
   const prompts = [
-    "Weather update", 
+    "Weather update for today", 
     "Best crop for next season", 
-    "Current market prices", 
-    "Fertilizer recommendation"
+    "Current APMC market prices", 
+    "Fertilizer NPK recommendation",
+    "Tomato early blight treatment"
   ];
 
   return (
-    <div className="animate-in fade-in zoom-in duration-500 pb-12">
-      <div className="mb-6">
-        <h2 className="text-xl font-bold text-white mb-2">Voice Assistant</h2>
-        <p className="text-slate-400 text-sm">Multilingual farmer support assistant for weather, crops, and market prices.</p>
+    <div className="max-w-4xl mx-auto pb-12 animate-in fade-in duration-300">
+      
+      {/* Header */}
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-[#DDF2E3] flex items-center justify-center text-[#176B3A]">
+            <Bot size={22} />
+          </div>
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#24352A] font-bricolage tracking-tight">
+              Multilingual Voice & Chat Copilot
+            </h1>
+            <p className="text-xs sm:text-sm text-[#718078]">
+              Powered by Google Gemini AI with Hindi, English, and regional dialect translation.
+            </p>
+          </div>
+        </div>
+
+        <div className="badge-pill-green self-start sm:self-center">
+          <Sparkles size={13} /> Gemini 2.5 Flash Connected
+        </div>
       </div>
 
-      <div className="flex flex-wrap gap-3 mb-6">
+      {/* Suggested Prompts Pills */}
+      <div className="flex flex-wrap gap-2 mb-4">
         {prompts.map((prompt, idx) => (
-           <button key={idx} onClick={() => setInput(prompt)} className="bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-300 px-4 py-2 rounded-lg text-sm transition-colors">
-              {prompt}
-           </button>
+          <button 
+            key={idx} 
+            onClick={() => setInput(prompt)} 
+            className="bg-white hover:bg-[#DDF2E3] border border-[#E2ECE4] text-[#24352A] hover:text-[#176B3A] px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all shadow-2xs"
+          >
+            {prompt}
+          </button>
         ))}
       </div>
 
-      <div className="card-panel border border-slate-700/50 bg-[#0f172a]/80 min-h-[500px] flex flex-col">
-        <div className="flex-1 p-6 space-y-4 overflow-y-auto">
-           {messages.map((msg, idx) => (
-             <div key={idx} className={`flex ${msg.isBot ? 'justify-start' : 'justify-end'}`}>
-               <div className={`max-w-[80%] rounded-xl px-5 py-3 text-sm ${msg.isBot ? 'bg-slate-800/80 text-slate-300' : 'bg-teal-600/90 text-white'}`}>
-                  {msg.text}
-               </div>
-             </div>
-           ))}
-        </div>
+      {/* Chat Container */}
+      <div className="card-panel overflow-hidden flex flex-col min-h-[520px] shadow-sm">
         
-        <div className="p-4 border-t border-slate-700/50 bg-slate-900/50">
-           <div className="relative flex items-center">
-             <input 
-                type="text" 
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                placeholder="Hello farmer! Ask me about weather, crops, or market prices." 
-                className="w-full bg-[#1e293b] border border-slate-700 text-slate-200 rounded-lg py-3 pl-4 pr-24 focus:outline-none focus:border-teal-500"
-             />
-             <button onClick={handleSend} className="absolute right-2 top-1/2 -translate-y-1/2 btn-primary py-1.5 px-4 text-sm font-semibold rounded-md">
-               Ask
-             </button>
-           </div>
+        {/* Messages Stream */}
+        <div className="flex-1 p-5 sm:p-6 space-y-4 overflow-y-auto max-h-[520px] bg-[#F8FAF7]/50">
+          {messages.map((msg, idx) => (
+            <div key={idx} className={`flex items-start gap-2.5 ${msg.isBot ? 'justify-start' : 'justify-end'}`}>
+              {msg.isBot && (
+                <div className="w-8 h-8 rounded-full bg-[#DDF2E3] text-[#176B3A] flex items-center justify-center shrink-0 mt-1 shadow-2xs">
+                  <Bot size={17} />
+                </div>
+              )}
+
+              <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                msg.isSystem 
+                  ? 'bg-[#FEF3C7] text-[#B45309] text-xs font-mono rounded-xl' 
+                  : msg.isBot 
+                    ? 'bg-white text-[#24352A] border border-[#E2ECE4] shadow-xs' 
+                    : 'bg-[#3FAE68] text-white shadow-xs font-medium'
+              }`}>
+                {msg.text}
+              </div>
+
+              {!msg.isBot && (
+                <div className="w-8 h-8 rounded-full bg-[#176B3A] text-white flex items-center justify-center shrink-0 mt-1 shadow-2xs">
+                  <User size={16} />
+                </div>
+              )}
+            </div>
+          ))}
+
+          {isTranslating && (
+            <div className="flex items-center gap-2 text-xs text-[#718078] bg-white border border-[#E2ECE4] px-4 py-2.5 rounded-full w-fit shadow-xs">
+              <span className="w-2 h-2 rounded-full bg-[#3FAE68] animate-ping"></span>
+              AgriVision Gemini AI is analyzing query...
+            </div>
+          )}
         </div>
+
+        {/* Input Bar */}
+        <div className="p-4 bg-white border-t border-[#E2ECE4]">
+          <div className="relative flex items-center gap-2">
+            <input 
+              type="text" 
+              disabled={isTranslating}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+              placeholder="Ask anything about farming, crops, weather, or mandi prices (Hindi / English)..." 
+              className="w-full bg-[#F2F6F0] border border-[#E2ECE4] text-[#24352A] placeholder-[#9BA8A0] rounded-full py-3 pl-5 pr-28 text-sm focus:outline-none focus:border-[#3FAE68] focus:ring-2 focus:ring-[#3FAE68]/20 transition-all shadow-xs"
+            />
+            
+            <button 
+              onClick={handleSend} 
+              disabled={isTranslating || !input.trim()}
+              className="absolute right-2 btn-primary py-2 px-4 text-xs font-bold shadow-xs"
+            >
+              <span>Ask</span>
+              <Send size={14} />
+            </button>
+          </div>
+        </div>
+
       </div>
+
     </div>
   );
 }

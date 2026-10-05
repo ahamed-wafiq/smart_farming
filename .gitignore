@@ -22,3 +22,18 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment & credentials
+.env
+.env.*
+backend/.env
+
+# Python / ML artifacts
+__pycache__/
+*.py[cod]
+backend/LLM_model/
+backend/models/
+*.safetensors
+*.pb
+*.h5
+*.pkl

@@ -1,60 +1,118 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, ScanLine, LineChart, Bot, User, PanelLeftClose } from 'lucide-react';
+import { 
+  LayoutDashboard, 
+  ScanLine, 
+  LineChart, 
+  Bot, 
+  User, 
+  CloudSun, 
+  TrendingUp, 
+  Settings as SettingsIcon, 
+  Home as HomeIcon,
+  Sprout,
+  X
+} from 'lucide-react';
 
-const Sidebar = () => {
+const Sidebar = ({ mobileOpen, setMobileOpen }) => {
   const navItemClass = ({ isActive }) => 
-    `flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-200 ${
+    `flex items-center gap-3.5 px-4 py-2.5 rounded-2xl font-medium text-sm transition-all duration-200 ${
       isActive 
-        ? 'bg-gradient-to-r from-cyan-500 to-teal-500 text-white shadow-lg shadow-teal-500/20' 
-        : 'text-slate-400 hover:text-slate-200 hover:bg-[#1e293b]/50'
+        ? 'bg-[#3FAE68] text-white shadow-[0_4px_14px_rgba(63,174,104,0.3)] font-semibold' 
+        : 'text-[#718078] hover:text-[#24352A] hover:bg-[#F2F6F0]'
     }`;
 
+  const navItems = [
+    { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { to: "/disease", label: "Disease Scanner", icon: ScanLine },
+    { to: "/market-prices", label: "Market Prices", icon: LineChart },
+    { to: "/voice-assistant", label: "Voice Assistant", icon: Bot },
+    { to: "/profile", label: "Profile & Planner", icon: User },
+    { to: "/weather", label: "Weather Forecast", icon: CloudSun },
+    { to: "/predictions", label: "Yield Prediction", icon: TrendingUp },
+    { to: "/settings", label: "Settings", icon: SettingsIcon },
+    { to: "/", label: "Home / Overview", icon: HomeIcon },
+  ];
+
   return (
-    <aside className="w-[280px] h-screen fixed top-0 left-0 flex flex-col bg-[#0f172a] border-r border-slate-800/50 text-slate-300 z-50">
-      <div className="flex items-center justify-between px-6 py-8">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded bg-gradient-to-r from-cyan-500 to-teal-500 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-teal-500/20">
-            AI
+    <>
+      {/* Mobile Backdrop */}
+      {mobileOpen && (
+        <div 
+          onClick={() => setMobileOpen(false)} 
+          className="fixed inset-0 bg-black/20 z-40 lg:hidden backdrop-blur-xs"
+        />
+      )}
+
+      <aside className={`
+        fixed top-0 left-0 h-screen w-[260px] bg-white border-r border-[#E2ECE4] 
+        flex flex-col z-50 transition-transform duration-300 ease-in-out
+        ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+      `}>
+        {/* Brand Header */}
+        <div className="flex items-center justify-between px-6 pt-6 pb-4">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-full bg-[#3FAE68] flex items-center justify-center text-white shadow-sm shadow-[#3FAE68]/30">
+              <Sprout size={20} />
+            </div>
+            <div>
+              <h1 className="text-lg font-bold text-[#24352A] tracking-tight leading-none font-bricolage">
+                AgriVision
+              </h1>
+              <span className="text-[11px] font-semibold text-[#718078] tracking-wide">
+                KrishiMitra AI
+              </span>
+            </div>
           </div>
-          <h1 className="text-xl font-bold text-white tracking-tight font-bricolage">AgriVision</h1>
+          
+          <button 
+            onClick={() => setMobileOpen(false)}
+            className="lg:hidden text-[#718078] hover:text-[#24352A] p-1 rounded-lg"
+          >
+            <X size={20} />
+          </button>
         </div>
-        <button className="text-slate-500 hover:text-slate-300 transition-colors">
-           <PanelLeftClose size={18} />
-        </button>
-      </div>
 
-      <nav className="flex-1 px-4 space-y-2 mt-4">
-        <NavLink to="/" className={navItemClass}>
-          <LayoutDashboard size={20} />
-          <span className="text-sm">Home</span>
-        </NavLink>
-        <NavLink to="/dashboard" className={navItemClass}>
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-          <span className="text-sm">Dashboard</span>
-        </NavLink>
-
-        <NavLink to="/market-prices" className={navItemClass}>
-          <LineChart size={20} />
-          <span className="text-sm">Market Prices</span>
-        </NavLink>
-        <NavLink to="/voice-assistant" className={navItemClass}>
-          <Bot size={20} />
-          <span className="text-sm">Voice Assistant</span>
-        </NavLink>
-        <NavLink to="/profile" className={navItemClass}>
-          <User size={20} />
-          <span className="text-sm">Profile & Planner</span>
-        </NavLink>
-      </nav>
-
-      <div className="p-6">
-        <div className="inline-flex items-center gap-2 bg-[#1e293b] px-4 py-2 rounded-full border border-slate-700/50">
-          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-          <span className="text-xs font-medium text-slate-300">AI Engine Active</span>
+        {/* Navigation Section */}
+        <div className="px-4 py-2">
+          <div className="text-[11px] font-bold text-[#9BA8A0] uppercase tracking-wider px-3 mb-2">
+            Main Menu
+          </div>
+          <nav className="space-y-1.5 overflow-y-auto max-h-[calc(100vh-220px)] scrollbar-hide">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  onClick={() => setMobileOpen && setMobileOpen(false)}
+                  className={navItemClass}
+                >
+                  <Icon size={19} className="shrink-0" />
+                  <span>{item.label}</span>
+                </NavLink>
+              );
+            })}
+          </nav>
         </div>
-      </div>
-    </aside>
+
+        {/* Bottom Farm Badge */}
+        <div className="mt-auto p-4 border-t border-[#E2ECE4]/80">
+          <div className="p-3.5 bg-[#F2F6F0] rounded-2xl flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-[#DDF2E3] flex items-center justify-center text-[#176B3A]">
+              <Sprout size={16} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-xs font-bold text-[#24352A] truncate">Smart Agro Field</div>
+              <div className="text-[10px] text-[#718078] flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#3FAE68] animate-pulse"></span>
+                Sensors Online
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </>
   );
 };
 

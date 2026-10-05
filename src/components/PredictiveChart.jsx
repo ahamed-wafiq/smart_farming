@@ -1,5 +1,5 @@
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
+import { ResponsiveContainer, Area, AreaChart, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
 import { BrainCircuit } from 'lucide-react';
 
 const mockData = [
@@ -14,44 +14,61 @@ const mockData = [
 
 const PredictiveChart = () => {
   return (
-    <div className="glass-panel p-6 h-full flex flex-col hover:shadow-2xl hover:shadow-accent-purple/10 transition-shadow duration-300">
+    <div className="card-panel p-6 h-full flex flex-col justify-between">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-xl font-bold text-slate-100 flex items-center gap-2">
-            <BrainCircuit className="text-accent-purple" size={24} />
-            AI Moisture Prediction
+          <h2 className="text-lg font-bold text-[#24352A] font-bricolage flex items-center gap-2">
+            <BrainCircuit className="text-[#3FAE68]" size={22} />
+            AI Moisture & Soil Tension Prediction
           </h2>
-          <p className="text-sm text-slate-400 mt-1">LSTM Time Series Model Output</p>
+          <p className="text-xs text-[#718078] mt-0.5">LSTM Recurrent Neural Network Output</p>
         </div>
-        <div className="px-3 py-1 bg-accent-purple/10 border border-accent-purple/30 rounded-full text-xs font-semibold text-accent-purple">
-          Real-time
+        <div className="badge-pill-green">
+          Real-time IoT
         </div>
       </div>
 
-      <div className="flex-1 min-h-[200px] w-full mt-4">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="flex-1 min-h-[220px] w-full mt-2">
+        <ResponsiveContainer width="100%" height="100%" minWidth={0}>
           <AreaChart data={mockData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
             <defs>
-              <linearGradient id="colorMoisture" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#10B981" stopOpacity={0.3}/>
-                <stop offset="95%" stopColor="#10B981" stopOpacity={0}/>
+              <linearGradient id="colorMoistureLight" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#3FAE68" stopOpacity={0.25}/>
+                <stop offset="95%" stopColor="#3FAE68" stopOpacity={0}/>
               </linearGradient>
-              <linearGradient id="colorPredicted" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.3}/>
-                <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0}/>
+              <linearGradient id="colorPredictedLight" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#176B3A" stopOpacity={0.2}/>
+                <stop offset="95%" stopColor="#176B3A" stopOpacity={0}/>
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
-            <XAxis dataKey="day" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
-            <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="#E2ECE4" vertical={false} />
+            <XAxis dataKey="day" stroke="#718078" fontSize={11} tickLine={false} axisLine={false} />
+            <YAxis stroke="#718078" fontSize={11} tickLine={false} axisLine={false} />
             <Tooltip 
-              contentStyle={{ backgroundColor: '#1E293B', borderColor: '#334155', borderRadius: '12px', color: '#f8fafc' }}
-              itemStyle={{ color: '#f8fafc' }}
+              contentStyle={{ 
+                backgroundColor: '#FFFFFF', 
+                borderColor: '#E2ECE4', 
+                borderRadius: '12px', 
+                color: '#24352A',
+                fontSize: '12px'
+              }}
             />
-            <Area type="monotone" dataKey="moisture" name="Actual %" stroke="#10B981" strokeWidth={3} fillOpacity={1} fill="url(#colorMoisture)" />
-            <Area type="monotone" dataKey="predicted" name="AI Forecast %" stroke="#8B5CF6" strokeWidth={3} strokeDasharray="5 5" fillOpacity={1} fill="url(#colorPredicted)" />
+            <Area type="monotone" dataKey="moisture" name="Actual Sensor %" stroke="#3FAE68" strokeWidth={3} fillOpacity={1} fill="url(#colorMoistureLight)" />
+            <Area type="monotone" dataKey="predicted" name="AI Forecast %" stroke="#176B3A" strokeWidth={2.5} strokeDasharray="4 4" fillOpacity={1} fill="url(#colorPredictedLight)" />
           </AreaChart>
         </ResponsiveContainer>
+      </div>
+
+      <div className="flex items-center justify-between text-xs text-[#718078] pt-4 border-t border-[#E2ECE4] mt-4">
+        <div className="flex items-center gap-4">
+          <span className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#3FAE68]"></span> Actual Moisture
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#176B3A]"></span> AI LSTM Forecast
+          </span>
+        </div>
+        <span className="font-semibold text-[#176B3A]">94.2% Confidence</span>
       </div>
     </div>
   );

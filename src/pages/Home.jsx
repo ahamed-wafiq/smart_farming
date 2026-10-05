@@ -1,137 +1,225 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, LineChart, Bot, User, ArrowRight, Sprout, ShieldCheck, Zap } from 'lucide-react';
+import { LayoutDashboard, LineChart, Bot, User, ArrowRight, Sprout, ShieldCheck, Zap, ScanLine, CloudSun } from 'lucide-react';
 
-const FeatureCard = ({ icon: Icon, title, description, colorClass, delay }) => (
-  <div 
-    className={`group relative overflow-hidden bg-slate-900 border border-slate-800 p-8 rounded-2xl hover:border-${colorClass}-500/50 transition-all duration-500 hover:shadow-2xl hover:shadow-${colorClass}-500/10 animate-in fade-in slide-in-from-bottom-8 cursor-default`}
-    style={{ animationDelay: delay, animationFillMode: 'both' }}
-  >
-    <div className={`absolute top-0 right-0 w-32 h-32 bg-${colorClass}-500/10 rounded-full blur-3xl group-hover:bg-${colorClass}-500/20 transition-colors duration-500`}></div>
-    
-    <div className={`w-14 h-14 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 shadow-lg`}>
-      <Icon className={`text-${colorClass}-400 group-hover:text-${colorClass}-300`} size={28} />
+const FeatureCard = ({ icon: Icon, title, description, badge }) => (
+  <div className="card-panel p-6 sm:p-8 hover:shadow-lg transition-all duration-300 flex flex-col justify-between group">
+    <div>
+      <div className="flex items-center justify-between mb-6">
+        <div className="w-14 h-14 rounded-2xl bg-[#DDF2E3] flex items-center justify-center text-[#176B3A] group-hover:scale-110 transition-transform duration-300 shadow-2xs">
+          <Icon size={26} />
+        </div>
+        {badge && (
+          <span className="badge-pill-green text-[11px]">
+            {badge}
+          </span>
+        )}
+      </div>
+      
+      <h3 className="text-xl font-bold text-[#24352A] mb-2.5 font-bricolage tracking-tight group-hover:text-[#176B3A] transition-colors">
+        {title}
+      </h3>
+      <p className="text-xs sm:text-sm text-[#718078] leading-relaxed">
+        {description}
+      </p>
     </div>
-    
-    <h3 className="text-2xl font-bold text-white mb-3 tracking-tight font-bricolage">{title}</h3>
-    <p className="text-slate-400 text-sm leading-relaxed mb-6">
-      {description}
-    </p>
+
+    <div className="mt-6 pt-4 border-t border-[#E2ECE4] flex items-center gap-1.5 text-xs font-bold text-[#176B3A] group-hover:gap-2.5 transition-all">
+      <span>Explore feature</span>
+      <ArrowRight size={14} />
+    </div>
   </div>
 );
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#070b14] text-slate-200 overflow-x-hidden font-sans relative selection:bg-teal-500/30">
+    <div className="min-h-screen bg-[#F2F6F0] text-[#24352A] font-sans selection:bg-[#3FAE68]/20">
       
-      {/* Background Ambience */}
-      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-teal-500/10 rounded-full blur-[150px] pointer-events-none"></div>
-      <div className="absolute top-[40%] right-[-10%] w-[40%] h-[50%] bg-cyan-600/10 rounded-full blur-[150px] pointer-events-none"></div>
-
-      {/* Landing Navbar */}
-      <header className="absolute top-0 w-full z-50 px-6 py-6 border-b border-white/5 bg-black/10 backdrop-blur-md">
+      {/* Top Navbar */}
+      <header className="sticky top-0 z-50 bg-[#F2F6F0]/90 backdrop-blur-md px-6 py-4 border-b border-[#E2ECE4]/70">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-teal-500 to-cyan-500 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-teal-500/20">
-              AI
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-full bg-[#3FAE68] flex items-center justify-center text-white shadow-xs">
+              <Sprout size={20} />
             </div>
-            <h1 className="text-2xl font-bold text-white tracking-tight font-bricolage">AgriVision</h1>
+            <div>
+              <span className="text-xl font-bold text-[#24352A] tracking-tight font-bricolage">AgriVision</span>
+              <span className="hidden sm:inline-block ml-2 text-xs font-bold text-[#718078]">KrishiMitra</span>
+            </div>
           </div>
-          <div className="hidden md:flex gap-8 text-sm font-medium text-slate-300">
-             <a href="#features" className="hover:text-teal-400 transition-colors">Features</a>
-             <a href="#about" className="hover:text-teal-400 transition-colors">About</a>
-             <a href="#api" className="hover:text-teal-400 transition-colors">Data.gov API</a>
+
+          <div className="hidden md:flex items-center gap-8 text-sm font-semibold text-[#718078]">
+            <a href="#features" className="hover:text-[#176B3A] transition-colors">Platform Features</a>
+            <a href="#about" className="hover:text-[#176B3A] transition-colors">Agronomy AI</a>
+            <NavLink to="/weather" className="hover:text-[#176B3A] transition-colors">Weather</NavLink>
+            <NavLink to="/market-prices" className="hover:text-[#176B3A] transition-colors">Mandi Rates</NavLink>
           </div>
-          <div className="flex items-center gap-4">
-             <span className="text-slate-400 text-sm hidden sm:inline">v2.0 MVP</span>
-             <NavLink to="/dashboard" className="px-5 py-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/10 text-white font-semibold transition-all backdrop-blur-sm">
-               Login
-             </NavLink>
+
+          <div className="flex items-center gap-3">
+            <NavLink 
+              to="/dashboard" 
+              className="btn-primary text-xs sm:text-sm py-2 px-5 shadow-xs"
+            >
+              Open Dashboard <ArrowRight size={15} />
+            </NavLink>
           </div>
         </div>
       </header>
 
       <main>
-        {/* Massive Hero Section */}
-        <section className="relative pt-40 pb-24 md:pt-52 md:pb-32 px-6">
-          <div className="max-w-5xl mx-auto text-center space-y-8 animate-in fade-in zoom-in duration-1000">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 text-sm font-bold tracking-wide uppercase mb-4 shadow-[0_0_20px_rgba(20,184,166,0.15)]">
-              <Sprout size={16} /> Intelligent Farming Ecosystem
-            </div>
+        {/* Hero Section */}
+        <section className="pt-16 pb-20 md:pt-24 md:pb-28 px-6">
+          <div className="max-w-4xl mx-auto text-center space-y-6">
             
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold text-white tracking-tighter leading-[1.1] font-bricolage drop-shadow-2xl">
-              Farming Decoded <br className="hidden md:block"/>
-              with <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-cyan-400 to-blue-500">Predictive AI.</span>
+            {/* Pill Badge */}
+            <div className="inline-flex items-center gap-2 bg-[#DDF2E3] text-[#176B3A] px-4 py-1.5 rounded-full text-xs font-bold shadow-2xs">
+              <span className="w-2 h-2 rounded-full bg-[#3FAE68] animate-pulse"></span>
+              Next-Generation Agronomic Intelligence
+            </div>
+
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-[#24352A] tracking-tight leading-[1.15] font-bricolage">
+              Farming Decoded <br className="hidden sm:block"/>
+              with <span className="text-[#176B3A]">Predictive AI.</span>
             </h1>
             
-            <p className="text-xl md:text-2xl text-slate-400 max-w-3xl mx-auto leading-relaxed">
-              Empowering farmers with state-of-the-art machine learning. Predict optimal crop yields, analyze real-time market prices, and utilize a multilingual smart assistant—all in one centralized platform.
+            <p className="text-base sm:text-lg text-[#718078] max-w-2xl mx-auto leading-relaxed">
+              Empowering farmers with state-of-the-art machine learning. Predict optimal crop yields, diagnose plant diseases via computer vision, analyze real-time market prices, and consult a multilingual voice assistant.
             </p>
             
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-5 pt-8">
-              <NavLink to="/dashboard" className="group px-8 py-4 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-600 text-white font-bold text-lg hover:shadow-2xl hover:shadow-teal-500/30 hover:scale-105 transition-all flex items-center gap-2 w-full sm:w-auto justify-center">
-                Get Started Now <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 pt-4">
+              <NavLink 
+                to="/dashboard" 
+                className="btn-primary text-sm sm:text-base py-3 px-8 shadow-sm w-full sm:w-auto"
+              >
+                Launch Smart Farm Dashboard <ArrowRight size={18} />
               </NavLink>
-              <div className="px-8 py-4 rounded-xl bg-slate-800/80 border border-slate-700 font-semibold text-slate-300 w-full sm:w-auto text-center flex items-center justify-center gap-3 backdrop-blur-sm cursor-default">
-                 <ShieldCheck size={20} className="text-emerald-500" /> Backed by Data.gov API
+
+              <NavLink 
+                to="/disease" 
+                className="btn-secondary text-sm sm:text-base py-3 px-6 w-full sm:w-auto"
+              >
+                <ScanLine size={18} className="text-[#3FAE68]" /> Scan Plant Leaf
+              </NavLink>
+            </div>
+
+            <div className="pt-4 flex flex-wrap items-center justify-center gap-6 text-xs text-[#718078] font-semibold">
+              <div className="flex items-center gap-1.5">
+                <ShieldCheck size={16} className="text-[#3FAE68]" /> Integrated with Data.gov.in
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Zap size={16} className="text-[#3FAE68]" /> 38-Class Leaf Pathogen Model
+              </div>
+              <div className="flex items-center gap-1.5">
+                <CloudSun size={16} className="text-[#3FAE68]" /> Live OpenWeather IoT Sync
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        {/* Dashboard Preview Showcase Card */}
+        <section className="px-6 pb-20 max-w-6xl mx-auto">
+          <div className="rounded-3xl overflow-hidden border border-[#E2ECE4] shadow-[0_12px_40px_rgba(36,53,42,0.08)] bg-white p-2">
+            <div className="bg-[#F2F6F0] rounded-2xl p-4 sm:p-6 border border-[#E2ECE4]/60">
+              <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#E2ECE4]">
+                <div className="flex items-center gap-2">
+                  <span className="w-3 h-3 rounded-full bg-[#EF4444]"></span>
+                  <span className="w-3 h-3 rounded-full bg-[#F59E0B]"></span>
+                  <span className="w-3 h-3 rounded-full bg-[#10B981]"></span>
+                  <span className="text-xs font-bold text-[#718078] ml-2">AgriVision Unified Dashboard</span>
+                </div>
+                <span className="badge-pill-green text-[11px]">Live Sensor Stream</span>
+              </div>
+              
+              {/* Preview Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="h-44 rounded-2xl relative overflow-hidden group">
+                  <img 
+                    src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?auto=format&fit=crop&w=600&q=80" 
+                    alt="Wheat field preview" 
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/40 p-4 flex flex-col justify-between text-white">
+                    <span className="text-xs font-bold bg-white/20 backdrop-blur-xs px-2.5 py-0.5 rounded-full w-fit">Wheat Sector A</span>
+                    <div className="font-bold text-sm font-bricolage">Moisture: 68% • Soil pH: 6.8</div>
+                  </div>
+                </div>
+
+                <div className="card-panel p-4 flex flex-col justify-between">
+                  <div className="text-xs font-bold text-[#718078]">Auto-Irrigation Copilot</div>
+                  <div className="text-lg font-bold text-[#176B3A] my-2">Delay Irrigation & Monitor for 24h</div>
+                  <div className="text-xs text-[#718078]">Rain expected in 48h. Saves 2,982 L/acre.</div>
+                </div>
+
+                <div className="card-panel p-4 flex flex-col justify-between">
+                  <div className="text-xs font-bold text-[#718078]">Deep Learning Recommendation</div>
+                  <div className="text-xl font-bold text-[#24352A] my-1 font-bricolage">Wheat (PBW 550)</div>
+                  <div className="badge-pill-green w-fit text-[11px]">96% Soil Compatibility</div>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Feature Grid Explanation */}
-        <section id="features" className="py-24 bg-[#0a0f1c] border-t border-white/5 relative z-10 px-6">
-           <div className="max-w-7xl mx-auto">
-             <div className="text-center mb-20 animate-in fade-in slide-in-from-bottom-10" style={{ animationDelay: '200ms', animationFillMode: 'both' }}>
-               <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6 font-bricolage tracking-tight">Our Core Features</h2>
-               <p className="text-slate-400 text-lg max-w-2xl mx-auto">Discover the toolset engineered to maximize your yield, stabilize your revenue, and demystify agricultural science.</p>
-             </div>
+        {/* Core Features Grid */}
+        <section id="features" className="py-20 bg-white border-t border-[#E2ECE4] px-6">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-[#24352A] mb-3 font-bricolage tracking-tight">
+                Engineered for Modern Agriculture
+              </h2>
+              <p className="text-xs sm:text-sm text-[#718078] max-w-xl mx-auto">
+                Comprehensive data tooling designed to maximize farm yield, stabilize market returns, and simplify agro-science.
+              </p>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <FeatureCard 
                 icon={LayoutDashboard}
-                title="AI Dashboards"
-                description="Live deep-learning crop predictions based on exact soil NPk conditions."
-                colorClass="teal"
-                delay="300ms"
+                title="AI Farm Dashboard"
+                description="Live deep-learning crop predictions based on exact soil NPK levels and micro-climates."
+                badge="Random Forest ML"
+              />
+              <FeatureCard 
+                icon={ScanLine}
+                title="Leaf Disease Scanner"
+                description="Detect 38 plant foliage diseases instantly using deep neural computer vision."
+                badge="TensorFlow Vision"
               />
               <FeatureCard 
                 icon={LineChart}
-                title="Market Radar"
-                description="Track live APMC Mandi prices universally. Compare live pricing vs MSP."
-                colorClass="blue"
-                delay="400ms"
+                title="APMC Mandi Radar"
+                description="Track live mandi modal prices universally across 20+ Indian states with MSP comparisons."
+                badge="Data.gov.in Live"
               />
               <FeatureCard 
                 icon={Bot}
-                title="Voice Assistant"
-                description="Multilingual AI-powered text and voice bot for agricultural strategy."
-                colorClass="purple"
-                delay="500ms"
-              />
-              <FeatureCard 
-                icon={User}
-                title="Farmer Profile"
-                description="Build detailed crop season records and generate automated cost plans."
-                colorClass="orange"
-                delay="600ms"
+                title="Voice & Chat Copilot"
+                description="Multilingual agronomy bot powered by Google Gemini supporting Hindi & English queries."
+                badge="Gemini 2.5 Flash"
               />
             </div>
-           </div>
+          </div>
         </section>
         
       </main>
 
-      {/* Simple Footer */}
-      <footer className="border-t border-white/5 bg-black/20 py-12 px-6 mt-12 backdrop-blur-md relative z-10">
-         <div className="max-w-7xl mx-auto flex justify-between items-center opacity-50">
-            <div className="text-sm font-medium">© 2026 AgriVision. Intelligent Farming.</div>
-            <div className="flex gap-4 text-sm">
-               <span>Privacy Policy</span>
-               <span>Terms of Service</span>
-            </div>
-         </div>
+      {/* Footer */}
+      <footer className="border-t border-[#E2ECE4] bg-[#F2F6F0] py-10 px-6">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-[#718078]">
+          <div className="flex items-center gap-2 font-medium">
+            <span className="font-bold text-[#24352A]">© 2026 AgriVision (KrishiMitra)</span>
+            <span>• Intelligent Precision Agriculture</span>
+          </div>
+          <div className="flex gap-4 font-semibold">
+            <NavLink to="/dashboard" className="hover:text-[#176B3A]">Dashboard</NavLink>
+            <NavLink to="/disease" className="hover:text-[#176B3A]">Disease Scanner</NavLink>
+            <NavLink to="/market-prices" className="hover:text-[#176B3A]">Market Radar</NavLink>
+            <NavLink to="/settings" className="hover:text-[#176B3A]">Settings</NavLink>
+          </div>
+        </div>
       </footer>
+
     </div>
   );
 }
